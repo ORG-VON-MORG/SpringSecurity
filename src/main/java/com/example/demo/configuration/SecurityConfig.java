@@ -91,12 +91,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //-------------------------------------------
 
 //-------------------https://www.ziaconsulting.com/developer-help/spring-security-active-directory/
+
+  /*
 @Override
 protected void configure(HttpSecurity http) throws Exception
 {
     http
             .authorizeRequests()
             .anyRequest().fullyAuthenticated()
+            .and()
             .httpBasic();
 }
 
@@ -104,36 +107,63 @@ protected void configure(HttpSecurity http) throws Exception
     public void configure(AuthenticationManagerBuilder auth) throws Exception
     {
         ActiveDirectoryLdapAuthenticationProvider adProvider =
-                new ActiveDirectoryLdapAuthenticationProvider(domain,url);
-        adProvider.setConvertSubErrorCodesToExceptions(true);
-        adProvider.setUseAuthenticationRequestCredentials(true);
+                new ActiveDirectoryLdapAuthenticationProvider("gps-srp.local","ldap://192.168.178.98:389/");
+        //adProvider.setConvertSubErrorCodesToExceptions(true);
+      //  adProvider.setUseAuthenticationRequestCredentials(true);
 
         // set pattern if it exists
         // The following example would authenticate a user if they were a member
         // of the ServiceAccounts group
         // (&(objectClass=user)(userPrincipalName={0})
         //   (memberof=CN=ServiceAccounts,OU=alfresco,DC=mycompany,DC=com))
+
+
         if (userDNPattern != null && userDNPattern.trim().length() > 0)
         {
             adProvider.setSearchFilter(userDNPattern);
         }
+
+
+
+        //adProvider.setSearchFilter("(&(objectClass=user)(sAMAccountName={0}))");
         auth.authenticationProvider(adProvider);
 
         // don't erase credentials if you plan to get them later
         // (e.g using them for another web service call)
-        auth.eraseCredentials(false);
+      //  auth.eraseCredentials(false);
     }
+
+
+    */
+
+
+
 //----------------------------------------------
 
 
+//----------------https://medium.com/@viraj.rajaguru/how-to-use-spring-security-to-authenticate-with-microsoft-active-directory-1caff11c57f2
 
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+                .authorizeRequests()
+                .anyRequest().fullyAuthenticated()
+                .and()
+                .formLogin();
+    }
 
-
-
-
-
-
-
-
+    @Bean
+    public ActiveDirectoryLdapAuthenticationProvider activeDirectoryLdapAuthenticationProvider(){
+        ActiveDirectoryLdapAuthenticationProvider activeDirectoryLdapAuthenticationProvider = new
+                ActiveDirectoryLdapAuthenticationProvider("gps-srp.local", "ldap://192.168.178.98:389/");
+        return activeDirectoryLdapAuthenticationProvider;
+    }
 
 }
+
+
+
+
+
+
+
